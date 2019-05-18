@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleScoreboard implements Scoreboard {
 
-    private static final String TEAM_PREFIX = "Scoreboard_";
+    private static final String TEAM_PREFIX = "Board_";
     private static int TEAM_COUNTER = 0;
 
     private final org.bukkit.scoreboard.Scoreboard scoreboard;
