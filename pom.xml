@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.tigerhix.lib</groupId>
-    <artifactId>scoreboard</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <artifactId>scoreboard-forked</artifactId>
+    <version>1.0.2</version>
 
     <packaging>jar</packaging>
 
@@ -21,14 +21,20 @@
             <id>tiger-repo</id>
             <url>http://repo.tigerhix.me/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>nexus</id>
-            <url>http://repo.tigerhix.me/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <resources>
