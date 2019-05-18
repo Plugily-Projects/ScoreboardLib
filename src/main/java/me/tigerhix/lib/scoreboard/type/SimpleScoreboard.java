@@ -173,7 +173,7 @@ public class SimpleScoreboard implements Scoreboard {
             offset++;
             // Otherwise, iterate through the string and cut off prefix and suffix
             prefix = text.substring(0, 16 - offset);
-            name = text.substring(16 - offset);
+            name = ChatColor.getLastColors(prefix) + text.substring(16 - offset);
             if (name.length() > 16) name = name.substring(0, 16);
             if (text.length() > 32) suffix = text.substring(32 - offset);
             // If teams already exist, use them
@@ -267,10 +267,6 @@ public class SimpleScoreboard implements Scoreboard {
         @Override
         public boolean isBanned() {
             return false;
-        }
-
-        @Override
-        public void setBanned(boolean banned) {
         }
 
         @Override
