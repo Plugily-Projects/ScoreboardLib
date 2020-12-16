@@ -175,7 +175,8 @@ public class SimpleScoreboard implements Scoreboard {
             prefix = text.substring(0, 16 - offset);
             name = ChatColor.getLastColors(prefix) + text.substring(16 - offset);
             if (name.length() > 16) name = name.substring(0, 16);
-            if (text.length() > 32) suffix = text.substring(32 - offset);
+            // -2 because of getLastColors need 2 chars
+            if (text.length() > 32) suffix = ChatColor.getLastColors(name) + text.substring(32 - offset - 2);
             // If teams already exist, use them
             for (Team other : teamCache.rowKeySet()) {
                 if (other.getPrefix().equals(prefix) && other.getSuffix().equals(suffix)) {

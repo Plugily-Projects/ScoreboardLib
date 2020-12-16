@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.tigerhix.lib</groupId>
-    <artifactId>scoreboard-forked</artifactId>
-    <version>1.0.2</version>
+    <artifactId>scoreboard</artifactId>
+    <version>1.0.3</version>
 
     <packaging>jar</packaging>
 
@@ -64,6 +64,18 @@
                 </configuration>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>3.4.1</version>
+            </extension>
+        </extensions>
     </build>
-
+    <distributionManagement>
+        <repository>
+            <id>plugily-projects-repo</id>
+            <url>ftp://46.249.204.191</url>
+        </repository>
+    </distributionManagement>
 </project>

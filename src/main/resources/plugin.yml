@@ -1,5 +1,7 @@
 name: ScoreboardLib
-version: 1.0.1
+version: 1.0.3
 description: Utilizing scoreboards for a UI enhancement.
 author: TigerHix
+authors:
+  - Tigerpanzer_02
 main: me.tigerhix.lib.scoreboard.ScoreboardLib
