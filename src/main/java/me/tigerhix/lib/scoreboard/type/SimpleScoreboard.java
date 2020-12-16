@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import me.tigerhix.lib.scoreboard.ScoreboardLib;
 import me.tigerhix.lib.scoreboard.common.Strings;
+import me.tigerhix.lib.scoreboard.util.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -133,12 +134,21 @@ public class SimpleScoreboard implements Scoreboard {
             // Handle the entry
             String key = entry.getName();
             Integer score = entry.getPosition();
-            if (key.length() > 48) key = key.substring(0, 47);
             String appearance;
-            if (key.length() > 16) {
-                appearance = key.substring(16);
+            if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+                if (key.length() > 144) key = key.substring(0, 143);
+                if (key.length() > 64) {
+                    appearance = key.substring(64);
+                } else {
+                    appearance = key;
+                }
             } else {
-                appearance = key;
+                if (key.length() > 48) key = key.substring(0, 47);
+                if (key.length() > 16) {
+                    appearance = key.substring(16);
+                } else {
+                    appearance = key;
+                }
             }
             if (!appeared.containsKey(appearance)) appeared.put(appearance, -1);
             appeared.put(appearance, appeared.get(appearance) + 1);
@@ -172,11 +182,25 @@ public class SimpleScoreboard implements Scoreboard {
             String suffix = "";
             offset++;
             // Otherwise, iterate through the string and cut off prefix and suffix
-            prefix = text.substring(0, 16 - offset);
-            name = ChatColor.getLastColors(prefix) + text.substring(16 - offset);
-            if (name.length() > 16) name = name.substring(0, 16);
-            // -2 because of getLastColors need 2 chars
-            if (text.length() > 32) suffix = ChatColor.getLastColors(name) + text.substring(32 - offset - 2);
+            if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+                if (text.length() > 63) {
+                    prefix = text.substring(0, 64 - offset);
+                    name = ChatColor.getLastColors(prefix) + text.substring(64 - offset);
+                    if (name.length() > 16) name = name.substring(0, 16);
+                    // -2 because of getLastColors need 2 chars
+                    if (text.length() > 80) suffix = ChatColor.getLastColors(name) + text.substring(80 - offset - 2);
+                } else {
+                    prefix = text.substring(0, text.length() - offset);
+                    name = ChatColor.getLastColors(prefix) + text.substring(text.length() - offset);
+                    if (name.length() > 16) name = name.substring(0, 16);
+                }
+              } else {
+                prefix = text.substring(0, 16 - offset);
+                name = ChatColor.getLastColors(prefix) + text.substring(16 - offset);
+                if (name.length() > 16) name = name.substring(0, 16);
+                // -2 because of getLastColors need 2 chars
+                if (text.length() > 32) suffix = ChatColor.getLastColors(name) + text.substring(32 - offset - 2);
+            }
             // If teams already exist, use them
             for (Team other : teamCache.rowKeySet()) {
                 if (other.getPrefix().equals(prefix) && other.getSuffix().equals(suffix)) {

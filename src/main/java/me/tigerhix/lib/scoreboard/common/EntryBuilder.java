@@ -1,6 +1,7 @@
 package me.tigerhix.lib.scoreboard.common;
 
 import me.tigerhix.lib.scoreboard.type.Entry;
+import me.tigerhix.lib.scoreboard.util.ServerVersion;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +49,11 @@ public final class EntryBuilder {
 
     private String adapt(String entry) {
         // Cut off the exceeded part if needed
-        if (entry.length() > 48) entry = entry.substring(0, 47);
+        if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+            if (entry.length() > 144) entry = entry.substring(0, 143);
+        } else {
+            if (entry.length() > 48) entry = entry.substring(0, 47);
+        }
         return Strings.format(entry);
     }
 
