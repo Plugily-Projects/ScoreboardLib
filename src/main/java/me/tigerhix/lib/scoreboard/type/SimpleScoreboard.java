@@ -135,7 +135,7 @@ public class SimpleScoreboard implements Scoreboard {
             String key = entry.getName();
             Integer score = entry.getPosition();
             String appearance;
-            if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+            if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1) && key.length() > 48) {
                 if (key.length() > 144) key = key.substring(0, 143);
                 if (key.length() > 64) {
                     appearance = key.substring(64);
@@ -182,24 +182,26 @@ public class SimpleScoreboard implements Scoreboard {
             String suffix = "";
             offset++;
             // Otherwise, iterate through the string and cut off prefix and suffix
-            if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+            if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1) && text.length() > 48) {
                 if (text.length() > 63) {
                     prefix = text.substring(0, 64 - offset);
                     name = ChatColor.getLastColors(prefix) + text.substring(64 - offset);
                     if (name.length() > 16) name = name.substring(0, 16);
                     // -2 because of getLastColors need 2 chars
-                    if (text.length() > 80) suffix = ChatColor.getLastColors(name) + text.substring(80 - offset - 2);
+                    if (text.length() > 80) suffix = ChatColor.getLastColors(name) + text.substring(80 - offset);
+                    if (suffix.length() > 64) suffix = suffix.substring(0, 64);
                 } else {
                     prefix = text.substring(0, text.length() - offset);
                     name = ChatColor.getLastColors(prefix) + text.substring(text.length() - offset);
                     if (name.length() > 16) name = name.substring(0, 16);
                 }
-              } else {
+            } else {
                 prefix = text.substring(0, 16 - offset);
                 name = ChatColor.getLastColors(prefix) + text.substring(16 - offset);
                 if (name.length() > 16) name = name.substring(0, 16);
                 // -2 because of getLastColors need 2 chars
-                if (text.length() > 32) suffix = ChatColor.getLastColors(name) + text.substring(32 - offset - 2);
+                if (text.length() > 32) suffix = ChatColor.getLastColors(name) + text.substring(32 - offset);
+                if (suffix.length() > 16) suffix = suffix.substring(0, 16);
             }
             // If teams already exist, use them
             for (Team other : teamCache.rowKeySet()) {
