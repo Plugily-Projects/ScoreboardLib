@@ -185,22 +185,22 @@ public class SimpleScoreboard implements Scoreboard {
             if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1) && text.length() > 48) {
                 if (text.length() > 63) {
                     prefix = text.substring(0, 64 - offset);
-                    name = ChatColor.getLastColors(prefix) + text.substring(64 - offset);
+                    name = getLastColor(prefix) + text.substring(64 - offset);
                     if (name.length() > 16) name = name.substring(0, 16);
                     // -2 because of getLastColors need 2 chars
-                    if (text.length() > 80) suffix = ChatColor.getLastColors(name) + text.substring(80 - offset);
+                    if (text.length() > 80) suffix = getLastColor(name) + text.substring(80 - 2 - offset);
                     if (suffix.length() > 64) suffix = suffix.substring(0, 64);
                 } else {
                     prefix = text.substring(0, text.length() - offset);
-                    name = ChatColor.getLastColors(prefix) + text.substring(text.length() - offset);
+                    name = getLastColor(prefix) + text.substring(text.length() - offset);
                     if (name.length() > 16) name = name.substring(0, 16);
                 }
             } else {
                 prefix = text.substring(0, 16 - offset);
-                name = ChatColor.getLastColors(prefix) + text.substring(16 - offset);
+                name = getLastColor(prefix) + text.substring(16 - offset);
                 if (name.length() > 16) name = name.substring(0, 16);
                 // -2 because of getLastColors need 2 chars
-                if (text.length() > 32) suffix = ChatColor.getLastColors(name) + text.substring(32 - offset);
+                if (text.length() > 32) suffix = getLastColor(name) + text.substring(32 - 2 - offset);
                 if (suffix.length() > 16) suffix = suffix.substring(0, 16);
             }
             // If teams already exist, use them
@@ -235,6 +235,14 @@ public class SimpleScoreboard implements Scoreboard {
             }
         }
         return faker;
+    }
+
+    private String getLastColor(String message) {
+        String color = ChatColor.getLastColors(message);
+        if (color.equalsIgnoreCase("")){
+            return "§f";
+        }
+        return color;
     }
 
     public Objective getObjective() {
