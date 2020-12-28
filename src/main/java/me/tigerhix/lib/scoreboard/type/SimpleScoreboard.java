@@ -185,22 +185,32 @@ public class SimpleScoreboard implements Scoreboard {
             if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1) && text.length() > 48) {
                 if (text.length() > 63) {
                     prefix = text.substring(0, 64 - offset);
-                    name = getLastColor(prefix) + text.substring(64 - offset);
+                    int charRemover = 0;
+                    if (prefix.endsWith("§")) {
+                        charRemover++;
+                    }
+                    name = getLastColor(prefix) + (prefix.endsWith("§") ? "§" : "") + text.substring(64 - offset);
                     if (name.length() > 16) name = name.substring(0, 16);
                     // -2 because of getLastColors need 2 chars
-                    if (text.length() > 80) suffix = getLastColor(name) + text.substring(80 - 2 - offset);
+                    if (text.length() > 80)
+                        suffix = getLastColor(name) + (name.endsWith("§") ? "§" : "") + text.substring(80 - 2 - charRemover - offset);
                     if (suffix.length() > 64) suffix = suffix.substring(0, 64);
                 } else {
                     prefix = text.substring(0, text.length() - offset);
-                    name = getLastColor(prefix) + text.substring(text.length() - offset);
+                    name = getLastColor(prefix) + (prefix.endsWith("§") ? "§" : "") + text.substring(text.length() - offset);
                     if (name.length() > 16) name = name.substring(0, 16);
                 }
             } else {
                 prefix = text.substring(0, 16 - offset);
-                name = getLastColor(prefix) + text.substring(16 - offset);
+                name = getLastColor(prefix) + (prefix.endsWith("§") ? "§" : "") + text.substring(16 - offset);
                 if (name.length() > 16) name = name.substring(0, 16);
                 // -2 because of getLastColors need 2 chars
-                if (text.length() > 32) suffix = getLastColor(name) + text.substring(32 - 2 - offset);
+                int charRemover = 0;
+                if (prefix.endsWith("§")) {
+                    charRemover++;
+                }
+                if (text.length() > 32)
+                    suffix = getLastColor(name) + (name.endsWith("§") ? "§" : "") + text.substring(32 - 2 - charRemover - offset);
                 if (suffix.length() > 16) suffix = suffix.substring(0, 16);
             }
             // If teams already exist, use them
@@ -239,7 +249,7 @@ public class SimpleScoreboard implements Scoreboard {
 
     private String getLastColor(String message) {
         String color = ChatColor.getLastColors(message);
-        if (color.equalsIgnoreCase("")){
+        if (color.equalsIgnoreCase("")) {
             return "§f";
         }
         return color;
