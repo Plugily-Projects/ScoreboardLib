@@ -6,7 +6,7 @@
 
     <groupId>me.tigerhix.lib</groupId>
     <artifactId>scoreboard</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>jar</packaging>
 
     <properties>
