@@ -9,13 +9,14 @@ public class ServerVersion {
   }
 
   public enum Version {
-    v1_7_R1,
+    v0_0_R0,
     v1_8_R1,
     v1_8_R2,
     v1_8_R3,
     v1_9_R1,
     v1_9_R2,
     v1_10_R1,
+    v1_10_R2,
     v1_11_R1,
     v1_12_R1,
     v1_13_R1,
@@ -69,7 +70,7 @@ public class ServerVersion {
       }
 
       if (current == null) { // If we forgot to add new version to enum
-        current = Version.v1_11_R1;
+        current = Version.v0_0_R0;
       }
 
       return current;
