@@ -6,7 +6,7 @@
 
     <groupId>me.tigerhix.lib</groupId>
     <artifactId>scoreboard</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,6 +24,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>viaversion-repo</id>
+            <url>https://repo.viaversion.com</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -31,6 +35,12 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>us.myles</groupId>
+            <artifactId>viaversion</artifactId>
+            <version>3.2.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -74,7 +84,12 @@
     <distributionManagement>
         <repository>
             <id>plugily-projects-repo</id>
-            <url>ftp://46.249.204.191</url>
+            <url>ftp://81.19.211.8</url>
         </repository>
+        <site>
+            <id>plugily-projects-java-docs</id>
+            <name>scoreboard</name>
+            <url>ftp://81.19.211.8</url>
+        </site>
     </distributionManagement>
 </project>
