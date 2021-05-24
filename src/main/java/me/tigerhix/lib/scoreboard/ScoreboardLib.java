@@ -31,7 +31,8 @@ public final class ScoreboardLib extends JavaPlugin {
     if(Bukkit.getPluginManager().isPluginEnabled("ViaVersion")) {
       ViaAPI api = Via.getAPI(); // Get the API
       int version = api.getPlayerVersion(holder); // Get the protocol version
-      if(version > 404) {
+      if(version > 404 && ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+        //only give player & server higher 1.13 the better scoreboard
         return new SimpleScoreboard(holder);
       }
     } else if(ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
