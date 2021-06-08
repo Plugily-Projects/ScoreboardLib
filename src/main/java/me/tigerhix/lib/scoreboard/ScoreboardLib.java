@@ -1,5 +1,7 @@
 package me.tigerhix.lib.scoreboard;
 
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.ViaAPI;
 import me.tigerhix.lib.scoreboard.type.LegacySimpleScoreboard;
 import me.tigerhix.lib.scoreboard.type.Scoreboard;
 import me.tigerhix.lib.scoreboard.type.SimpleScoreboard;
@@ -8,8 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import us.myles.ViaVersion.api.Via;
-import us.myles.ViaVersion.api.ViaAPI;
 
 public final class ScoreboardLib extends JavaPlugin {
 
