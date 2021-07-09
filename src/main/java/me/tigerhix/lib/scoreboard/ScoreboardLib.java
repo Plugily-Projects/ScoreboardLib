@@ -29,11 +29,15 @@ public final class ScoreboardLib extends JavaPlugin {
       return new LegacySimpleScoreboard(holder);
     }
     if(Bukkit.getPluginManager().isPluginEnabled("ViaVersion")) {
-      ViaAPI api = Via.getAPI(); // Get the API
-      int version = api.getPlayerVersion(holder); // Get the protocol version
-      if(version > 404 && ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
-        //only give player & server higher 1.13 the better scoreboard
-        return new SimpleScoreboard(holder);
+      try {
+        ViaAPI api = Via.getAPI(); // Get the API
+        int version = api.getPlayerVersion(holder); // Get the protocol version
+        if(version > 404 && ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+          //only give player & server higher 1.13 the better scoreboard
+          return new SimpleScoreboard(holder);
+        }
+      } catch(Exception ignored) {
+        //Not using ViaVersion 4 or unable to get ViaVersion return LegacyBoard!
       }
     } else if(ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
       return new SimpleScoreboard(holder);
