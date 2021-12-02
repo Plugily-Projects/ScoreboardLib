@@ -38,11 +38,11 @@ public class LegacySimpleScoreboard implements Scoreboard {
     private Table<Team, String, String> teamCache = HashBasedTable.create();
     private BukkitRunnable updateTask;
 
-    public LegacySimpleScoreboard(Player holder) {
+    public LegacySimpleScoreboard(Player holder,String board_name) {
         this.holder = holder;
         // Initiate the Bukkit scoreboard
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        scoreboard.registerNewObjective("board", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
+        scoreboard.registerNewObjective("board_"+board_name, "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
         objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
     }
 

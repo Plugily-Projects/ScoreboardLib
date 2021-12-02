@@ -29,11 +29,11 @@ public class SimpleScoreboard implements Scoreboard {
     private ScoreboardHandler handler;
     private BukkitTask updateTask;
 
-    public SimpleScoreboard(Player holder) {
+    public SimpleScoreboard(Player holder,String board_name) {
         this.holder = holder;
         // Initiate the Bukkit scoreboard
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        scoreboard.registerNewObjective("board", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
+        scoreboard.registerNewObjective("board_"+board_name, "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
         objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
         for (int i = 1; i <= 15; i++) {
             Team team = scoreboard.registerNewTeam(TEAM_PREFIX + i);

@@ -24,9 +24,9 @@ public final class ScoreboardLib extends JavaPlugin {
     ScoreboardLib.instance = instance;
   }
 
-  public static Scoreboard createScoreboard(Player holder) {
+  public static Scoreboard createScoreboard(Player holder, String board_name) {
     if(Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport")) {
-      return new LegacySimpleScoreboard(holder);
+      return new LegacySimpleScoreboard(holder,board_name);
     }
     if(Bukkit.getPluginManager().isPluginEnabled("ViaVersion")) {
       try {
@@ -34,15 +34,15 @@ public final class ScoreboardLib extends JavaPlugin {
         int version = api.getPlayerVersion(holder); // Get the protocol version
         if(version > 404 && ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
           //only give player & server higher 1.13 the better scoreboard
-          return new SimpleScoreboard(holder);
+          return new SimpleScoreboard(holder,board_name);
         }
       } catch(Exception ignored) {
         //Not using ViaVersion 4 or unable to get ViaVersion return LegacyBoard!
       }
     } else if(ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
-      return new SimpleScoreboard(holder);
+      return new SimpleScoreboard(holder,board_name);
     }
-    return new LegacySimpleScoreboard(holder);
+    return new LegacySimpleScoreboard(holder,board_name);
   }
 
   @Override
