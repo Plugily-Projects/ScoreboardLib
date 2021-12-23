@@ -10,6 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 public final class ScoreboardLib extends JavaPlugin {
 
@@ -24,7 +27,25 @@ public final class ScoreboardLib extends JavaPlugin {
     ScoreboardLib.instance = instance;
   }
 
-  public static Scoreboard createScoreboard(Player holder, String board_name) {
+  public static Scoreboard createScoreboard(Player holder, @Nullable String new_board_name) {
+    String board_name;
+    if (new_board_name!=null && new_board_name.length()>0) {
+      board_name=new_board_name;
+    } else {
+      int leftLimit = 48; // numeral '0'
+      int rightLimit = 122; // letter 'z'
+      int targetStringLength = 6;
+      Random random = new Random();
+
+      //Unique String Generator
+      String generatedString = random.ints(leftLimit, rightLimit + 1)
+              .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+              .limit(targetStringLength)
+              .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+              .toString();
+
+      board_name=generatedString;
+    }
     if(Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport")) {
       return new LegacySimpleScoreboard(holder,board_name);
     }
