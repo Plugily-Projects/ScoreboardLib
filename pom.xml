@@ -75,6 +75,30 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <windowtitle>ScoreboardLib API docs for v${project.version}</windowtitle>
+                    <description>
+                        A flicker-free scoreboard library with support of text up to 122 chars for 1.14+ and 48 chars
+                        for 1.13-
+                    </description>
+                    <destDir>minecraft/scoreboardlib</destDir>
+                    <isOffline>false</isOffline>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <extensions>
             <extension>
