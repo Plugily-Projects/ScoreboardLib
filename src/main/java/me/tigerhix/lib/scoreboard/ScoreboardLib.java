@@ -42,14 +42,14 @@ public final class ScoreboardLib extends JavaPlugin {
       try {
         ViaAPI api = Via.getAPI(); // Get the API
         int version = api.getPlayerVersion(holder); // Get the protocol version
-        if(version > 404 && ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
-          //only give player & server higher 1.13 the better scoreboard
+        if(version >= 401 && ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_13_R1)) {
+          //only give player & server higher 1.12 the better scoreboard
           return new SimpleScoreboard(holder);
         }
       } catch(Exception ignored) {
         //Not using ViaVersion 4 or unable to get ViaVersion return LegacyBoard!
       }
-    } else if(ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+    } else if(ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_13_R1)) {
       return new SimpleScoreboard(holder);
     }
     return new LegacySimpleScoreboard(holder);
