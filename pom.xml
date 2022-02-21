@@ -17,10 +17,6 @@
 
     <repositories>
         <repository>
-            <id>tiger-repo</id>
-            <url>http://repo.tigerhix.me/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -42,6 +38,13 @@
             <artifactId>viaversion-api</artifactId>
             <version>4.0.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>protocolsupport.ProtocolSupport</groupId>
+            <artifactId>ProtocolSupport</artifactId>
+            <version>1.18.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ProtocolSupport-Stripped-Api.jar</systemPath>
         </dependency>
     </dependencies>
 
