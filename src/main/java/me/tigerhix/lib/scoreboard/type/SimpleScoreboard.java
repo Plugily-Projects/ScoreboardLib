@@ -100,6 +100,10 @@ public class SimpleScoreboard implements Scoreboard {
 
   @Override
   public void update() {
+    if (!activated) {
+      return;
+    }
+
     if(!holder.isOnline()) {
       deactivate();
       return;
