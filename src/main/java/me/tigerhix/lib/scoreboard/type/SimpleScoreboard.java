@@ -1,11 +1,9 @@
 package me.tigerhix.lib.scoreboard.type;
 
-import me.tigerhix.lib.scoreboard.ScoreboardLib;
 import me.tigerhix.lib.scoreboard.common.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
@@ -24,10 +22,8 @@ public class SimpleScoreboard implements Scoreboard {
   private final org.bukkit.scoreboard.Scoreboard scoreboard;
   private final Objective objective;
   protected Player holder;
-  protected long updateInterval = 10L;
   private boolean activated;
   private ScoreboardHandler handler;
-  private BukkitTask updateTask;
 
   public SimpleScoreboard(Player holder) {
     this.holder = holder;
@@ -36,8 +32,7 @@ public class SimpleScoreboard implements Scoreboard {
     scoreboard.registerNewObjective("board", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
     objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
     for(int i = 1; i <= 15; i++) {
-      Team team = scoreboard.registerNewTeam(TEAM_PREFIX + i);
-      team.addEntry(genEntry(i));
+      scoreboard.registerNewTeam(TEAM_PREFIX + i).addEntry(getEntry(i));
     }
   }
 
@@ -52,8 +47,6 @@ public class SimpleScoreboard implements Scoreboard {
     activated = true;
     // Set to the custom scoreboard
     holder.setScoreboard(scoreboard);
-    // And start updating on a desired interval
-    updateTask = Bukkit.getServer().getScheduler().runTaskTimer(ScoreboardLib.getPluginInstance(), this::update, 0, updateInterval);
   }
 
   @Override
@@ -65,15 +58,13 @@ public class SimpleScoreboard implements Scoreboard {
     // Set to the main scoreboard
     if(holder.isOnline()) {
       synchronized(this) {
-        holder.setScoreboard((Bukkit.getScoreboardManager().getMainScoreboard()));
+        holder.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
       }
     }
     // Unregister teams that are created for this scoreboard
     for(Team team : scoreboard.getTeams()) {
       team.unregister();
     }
-    // Stop updating
-    updateTask.cancel();
   }
 
   @Override
@@ -94,16 +85,12 @@ public class SimpleScoreboard implements Scoreboard {
 
   @Override
   public long getUpdateInterval() {
-    return updateInterval;
+    throw new UnsupportedOperationException("Update interval is not supported anymore");
   }
 
   @Override
-  public Scoreboard setUpdateInterval(long updateInterval) {
-    if(activated) {
-      throw new IllegalStateException("Scoreboard is already activated");
-    }
-    this.updateInterval = updateInterval;
-    return this;
+  public LegacySimpleScoreboard setUpdateInterval(long updateInterval) {
+    throw new UnsupportedOperationException("Update interval is not supported anymore");
   }
 
   @Override
@@ -111,48 +98,54 @@ public class SimpleScoreboard implements Scoreboard {
     return holder;
   }
 
-  private void update() {
+  @Override
+  public void update() {
     if(!holder.isOnline()) {
       deactivate();
       return;
     }
-    // Title
+
     String handlerTitle = handler.getTitle(holder);
-    String finalTitle = Strings
-        .format(handlerTitle != null ? handlerTitle : ChatColor.BOLD.toString());
+    String finalTitle = handlerTitle != null ? Strings.format(handlerTitle) : ChatColor.BOLD.toString();
+
     if(!objective.getDisplayName().equals(finalTitle)) {
-      objective.setDisplayName(Strings.format(finalTitle));
+      objective.setDisplayName(finalTitle);
     }
-    // Entries
+
     List<Entry> passed = handler.getEntries(holder);
-    List<Integer> current = new ArrayList<>();
+
     if(passed == null) {
       return;
     }
-    for(Entry entry : passed) {
-      // Handle the entry
-      String key = entry.getName();
-      int score = entry.getPosition();
 
+    List<Integer> current = new ArrayList<>(passed.size());
+
+    for(Entry entry : passed) {
+      int score = entry.getPosition();
       Team team = scoreboard.getTeam(TEAM_PREFIX + score);
-      String temp = genEntry(score);
+      String temp = getEntry(score);
+
       if(!scoreboard.getEntries().contains(temp)) {
         objective.getScore(temp).setScore(score);
       }
 
-      // Add prefix & suffix
-      key = Strings.format(key);
-      String prefix = getFirstSplit(key);
-      String suffix = getFirstSplit(ChatColor.getLastColors(prefix) + (prefix.endsWith("§") ? "§" : "") + getSecondSplit(key));
+      String key = Strings.format(entry.getName());
+      int length = key.length();
+
+      String prefix = length > 64 ? key.substring(0, 64) : key;
+      String suffix = ChatColor.getLastColors(prefix) + (prefix.charAt(prefix.length() - 1) == '§' ? "§" : "") + limitKey(length, key);
+
       team.setPrefix(prefix);
-      team.setSuffix(suffix);
-      // Add to current
+      team.setSuffix(suffix.length() > 64 ? suffix.substring(0, 64) : suffix);
+
       current.add(score);
     }
+
     // Remove duplicated or non-existent entries
     for(int i = 1; i <= 15; i++) {
       if(!current.contains(i)) {
-        String entry = genEntry(i);
+        String entry = getEntry(i);
+
         if(scoreboard.getEntries().contains(entry)) {
           scoreboard.resetScores(entry);
         }
@@ -164,22 +157,21 @@ public class SimpleScoreboard implements Scoreboard {
     return objective;
   }
 
-  private String genEntry(int slot) {
-    return ChatColor.values()[slot].toString();
+  private final ChatColor[] values = ChatColor.values();
+
+  private String getEntry(int slot) {
+    return values[slot].toString();
   }
 
   public org.bukkit.scoreboard.Scoreboard getScoreboard() {
     return scoreboard;
   }
 
-  private String getFirstSplit(String s) {
-    return s.length() > 64 ? s.substring(0, 64) : s;
-  }
-
-  private String getSecondSplit(String s) {
-    if(s.length() > 128) {
-      s = s.substring(0, 128);
+  private String limitKey(int length, String str) {
+    if(length > 128) {
+      return str.substring(0, 128);
     }
-    return s.length() > 64 ? s.substring(64) : "";
+
+    return length > 64 ? str.substring(64) : "";
   }
 }
