@@ -132,17 +132,19 @@ public class LegacySimpleScoreboard implements Scoreboard {
 
     for(Entry entry : passed) {
       String key = entry.getName();
-      int score = entry.getPosition();
 
       if(key.length() > 48) {
-        key = key.substring(0, 47);
+        key = key.substring(0, 48);
       }
 
-      int val = appeared.computeIfAbsent(key.length() > 16 ? key.substring(16) : key, k -> -1) + 1;
-      appeared.put(key, val);
+      String appearance = key.length() > 16 ? key.substring(16) : key;
+
+      int val = appeared.computeIfAbsent(appearance, k -> -1) + 1;
+      appeared.put(appearance, val);
 
       FakePlayer faker = getFakePlayer(key, val);
       Score fakePlayerScore = objective.getScore(faker);
+      int score = entry.getPosition();
 
       // Set score
       for(String ks : scoreboard.getEntries()) {
