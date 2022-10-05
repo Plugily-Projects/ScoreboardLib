@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class SimpleScoreboard implements Scoreboard {
 
-  private static final String TEAM_PREFIX = "Board_";
+  private static final String TEAM_PREFIX = "Plugily_";
   private final org.bukkit.scoreboard.Scoreboard scoreboard;
   private final Objective objective;
   protected Player holder;
@@ -29,7 +29,7 @@ public class SimpleScoreboard implements Scoreboard {
     this.holder = holder;
     // Initiate the Bukkit scoreboard
     scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-    scoreboard.registerNewObjective("board", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
+    scoreboard.registerNewObjective("plugily", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
     objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
     for(int i = 1; i <= 15; i++) {
       scoreboard.registerNewTeam(TEAM_PREFIX + i).addEntry(getEntry(i));

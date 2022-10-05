@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("deprecation")
 public class LegacySimpleScoreboard implements Scoreboard {
 
-  private static final String TEAM_PREFIX = "Board_";
+  private static final String TEAM_PREFIX = "Plugily_";
   private static int TEAM_COUNTER = 0;
 
   private final org.bukkit.scoreboard.Scoreboard scoreboard;
@@ -42,7 +42,7 @@ public class LegacySimpleScoreboard implements Scoreboard {
     this.holder = holder;
     // Initiate the Bukkit scoreboard
     scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-    scoreboard.registerNewObjective("board", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
+    scoreboard.registerNewObjective("plugily", "dummy").setDisplaySlot(DisplaySlot.SIDEBAR);
     objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
   }
 
