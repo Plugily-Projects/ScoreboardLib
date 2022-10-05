@@ -20,6 +20,11 @@ public interface Scoreboard {
     void deactivate();
 
     /**
+     * Updates the scoreboard lines.
+     */
+    void update();
+
+    /**
      * Determine if the scoreboard has been already activated.
      *
      * @return activated
@@ -43,16 +48,20 @@ public interface Scoreboard {
     /**
      * Returns the update interval (default = 10L).
      *
+     * @deprecated not used anymore
      * @return update interval
      */
+    @Deprecated
     long getUpdateInterval();
 
     /**
      * Set the update interval.
      *
      * @param updateInterval update interval
+     * @deprecated not used anymore
      * @return this
      */
+    @Deprecated
     Scoreboard setUpdateInterval(long updateInterval);
 
     /**

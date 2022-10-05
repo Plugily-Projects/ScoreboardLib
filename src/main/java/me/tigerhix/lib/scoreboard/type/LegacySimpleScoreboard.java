@@ -2,24 +2,26 @@ package me.tigerhix.lib.scoreboard.type;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import me.tigerhix.lib.scoreboard.ScoreboardLib;
 import me.tigerhix.lib.scoreboard.common.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("deprecation")
 public class LegacySimpleScoreboard implements Scoreboard {
 
   private static final String TEAM_PREFIX = "Board_";
@@ -29,14 +31,12 @@ public class LegacySimpleScoreboard implements Scoreboard {
   private final Objective objective;
 
   protected Player holder;
-  protected long updateInterval = 10L;
 
   private boolean activated;
   private ScoreboardHandler handler;
   private Map<FakePlayer, Integer> entryCache = new ConcurrentHashMap<>();
   private Table<String, Integer, FakePlayer> playerCache = HashBasedTable.create();
   private Table<Team, String, String> teamCache = HashBasedTable.create();
-  private BukkitTask updateTask;
 
   public LegacySimpleScoreboard(Player holder) {
     this.holder = holder;
@@ -53,8 +53,6 @@ public class LegacySimpleScoreboard implements Scoreboard {
     activated = true;
     // Set to the custom scoreboard
     holder.setScoreboard(scoreboard);
-    // And start updating on a desired interval
-    updateTask = Bukkit.getServer().getScheduler().runTaskTimer(ScoreboardLib.getPluginInstance(), this::update, 0, updateInterval);
   }
 
   @Override
@@ -64,15 +62,13 @@ public class LegacySimpleScoreboard implements Scoreboard {
     // Set to the main scoreboard
     if(holder.isOnline()) {
       synchronized(this) {
-        holder.setScoreboard((Bukkit.getScoreboardManager().getMainScoreboard()));
+        holder.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
       }
     }
     // Unregister teams that are created for this scoreboard
     for(Team team : teamCache.rowKeySet()) {
       team.unregister();
     }
-    // Stop updating
-    updateTask.cancel();
   }
 
   @Override
@@ -93,14 +89,12 @@ public class LegacySimpleScoreboard implements Scoreboard {
 
   @Override
   public long getUpdateInterval() {
-    return updateInterval;
+    throw new UnsupportedOperationException("Update interval is not supported anymore");
   }
 
   @Override
   public LegacySimpleScoreboard setUpdateInterval(long updateInterval) {
-    if(activated) throw new IllegalStateException("Scoreboard is already activated");
-    this.updateInterval = updateInterval;
-    return this;
+    throw new UnsupportedOperationException("Update interval is not supported anymore");
   }
 
   @Override
@@ -108,80 +102,111 @@ public class LegacySimpleScoreboard implements Scoreboard {
     return holder;
   }
 
-  @SuppressWarnings("deprecation")
-  private void update() {
+  @Override
+  public void update() {
+    if (!activated) {
+      return;
+    }
+
     if(!holder.isOnline()) {
       deactivate();
       return;
     }
+
     // Title
     String handlerTitle = handler.getTitle(holder);
-    String finalTitle = Strings.format(handlerTitle != null ? handlerTitle : ChatColor.BOLD.toString());
-    if(!objective.getDisplayName().equals(finalTitle)) objective.setDisplayName(Strings.format(finalTitle));
+    String finalTitle = handlerTitle != null ? Strings.format(handlerTitle) : ChatColor.BOLD.toString();
+
+    if(!objective.getDisplayName().equals(finalTitle)) {
+      objective.setDisplayName(finalTitle);
+    }
+
     // Entries
     List<Entry> passed = handler.getEntries(holder);
-    Map<String, Integer> appeared = new HashMap<>();
-    Map<FakePlayer, Integer> current = new HashMap<>();
-    if(passed == null) return;
+    if(passed == null) {
+      return;
+    }
+
+    Map<String, Integer> appeared = new HashMap<>(passed.size());
+    Set<FakePlayer> current = new HashSet<>(passed.size());
+
     for(Entry entry : passed) {
-      // Handle the entry
       String key = entry.getName();
-      Integer score = entry.getPosition();
-      if(key.length() > 48) key = key.substring(0, 47);
-      String appearance;
-      if(key.length() > 16) {
-        appearance = key.substring(16);
-      } else {
-        appearance = key;
+
+      if(key.length() > 48) {
+        key = key.substring(0, 48);
       }
-      if(!appeared.containsKey(appearance)) appeared.put(appearance, -1);
-      appeared.put(appearance, appeared.get(appearance) + 1);
-      // Get fake player
-      FakePlayer faker = getFakePlayer(key, appeared.get(appearance));
+
+      String appearance = key.length() > 16 ? key.substring(16) : key;
+
+      int val = appeared.computeIfAbsent(appearance, k -> -1) + 1;
+      appeared.put(appearance, val);
+
+      FakePlayer faker = getFakePlayer(key, val);
+      Score fakePlayerScore = objective.getScore(faker);
+      int score = entry.getPosition();
+
       // Set score
       for(String ks : scoreboard.getEntries()) {
-        if(score.equals(objective.getScore(ks).getScore()) && !objective.getScore(ks).getEntry().equals(objective.getScore(faker).getEntry())) {
+        Score sc = objective.getScore(ks);
+
+        if(score == sc.getScore() && !sc.getEntry().equals(fakePlayerScore.getEntry())) {
           scoreboard.resetScores(ks);
           break;
         }
       }
-      objective.getScore(faker).setScore(score);
+
+      fakePlayerScore.setScore(score);
+
       // Update references
       entryCache.put(faker, score);
-      current.put(faker, score);
+      current.add(faker);
     }
+
     appeared.clear();
+
     // Remove duplicated or non-existent entries
     for(FakePlayer fakePlayer : entryCache.keySet()) {
-      if(!current.containsKey(fakePlayer)) {
+      if(!current.contains(fakePlayer)) {
         entryCache.remove(fakePlayer);
-        scoreboard.resetScores(String.valueOf(fakePlayer));
+        scoreboard.resetScores(fakePlayer.toString());
       }
     }
   }
 
-  @SuppressWarnings("deprecation")
   private FakePlayer getFakePlayer(String text, int offset) {
     Team team = null;
     String name;
+    int length = text.length();
+
     // If the text has a length less than 16, teams need not to be be created
-    if(text.length() <= 16) {
+    if(length <= 16) {
       name = text + Strings.repeat(" ", offset);
     } else {
-      String prefix;
-      String suffix = "";
       offset++;
+
       // Otherwise, iterate through the string and cut off prefix and suffix
-      prefix = text.substring(0, 16 - offset);
-      name = text.substring(16 - offset);
-      if(name.length() > 16) name = name.substring(0, 16);
-      if(text.length() > 32) suffix = text.substring(32 - offset);
+      int index = 16 - offset;
+
+      String prefix = text.substring(0, index);
+      name = text.substring(index);
+
+      if(name.length() > 16) {
+        name = name.substring(0, 16);
+      }
+
+      String suffix = "";
+      if(length > 32) {
+        suffix = text.substring(32 - offset);
+      }
+
       // If teams already exist, use them
       for(Team other : teamCache.rowKeySet()) {
-        if(other.getPrefix().equals(prefix) && other.getSuffix().equals(suffix)) {
+        if(other.getPrefix().equals(prefix) && suffix.equals(other.getSuffix())) {
           team = other;
         }
       }
+
       // Otherwise create them
       if(team == null) {
         team = scoreboard.registerNewTeam(TEAM_PREFIX + TEAM_COUNTER++);
@@ -190,24 +215,25 @@ public class LegacySimpleScoreboard implements Scoreboard {
         teamCache.put(team, prefix, suffix);
       }
     }
-    FakePlayer faker;
-    if(!playerCache.contains(name, offset)) {
-      faker = new FakePlayer(name, team, offset);
-      playerCache.put(name, offset, faker);
-      if(faker.getTeam() != null) {
-        faker.getTeam().addPlayer(faker);
-      }
+
+    FakePlayer fakePlayer = playerCache.get(name, offset);
+
+    if(fakePlayer == null) {
+      fakePlayer = new FakePlayer(name, team);
+      playerCache.put(name, offset, fakePlayer);
     } else {
-      faker = (FakePlayer) playerCache.get(name, offset);
-      if(team != null && faker.getTeam() != null) {
-        faker.getTeam().removePlayer(faker);
+      if(team != null && fakePlayer.team != null) {
+        fakePlayer.team.removePlayer(fakePlayer);
       }
-      faker.setTeam(team);
-      if(faker.getTeam() != null) {
-        faker.getTeam().addPlayer(faker);
-      }
+
+      fakePlayer.team = team;
     }
-    return faker;
+
+    if(fakePlayer.team != null) {
+      fakePlayer.team.addPlayer(fakePlayer);
+    }
+
+    return fakePlayer;
   }
 
   public Objective getObjective() {
@@ -220,33 +246,14 @@ public class LegacySimpleScoreboard implements Scoreboard {
 
   private static class FakePlayer implements OfflinePlayer {
 
+    private final UUID randomId = UUID.randomUUID();
+
     private final String name;
-
     private Team team;
-    private int offset;
 
-    FakePlayer(String name, Team team, int offset) {
+    FakePlayer(String name, Team team) {
       this.name = name;
       this.team = team;
-      this.offset = offset;
-    }
-
-    public Team getTeam() {
-      return team;
-    }
-
-    public void setTeam(Team team) {
-      this.team = team;
-    }
-
-    public int getOffset() {
-      return offset;
-    }
-
-    public String getFullName() {
-      if(team == null) return name;
-      if(team.getSuffix() == null) return team.getPrefix() + name;
-      return team.getPrefix() + name + team.getSuffix();
     }
 
     @Override
@@ -261,7 +268,7 @@ public class LegacySimpleScoreboard implements Scoreboard {
 
     @Override
     public UUID getUniqueId() {
-      return UUID.randomUUID();
+      return randomId;
     }
 
     @Override
