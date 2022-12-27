@@ -24,6 +24,7 @@ jobs:
         run: "echo 'New Version: ${{steps.bump.outputs.version}}'"
   publish:
     if: github.event.pull_request.merged
+    needs: bump
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,5 +37,5 @@ jobs:
       - name: Publish with Gradle
         run: ./gradlew build publish
         env:
-          MAVEN_NAME: ${{ secrets.SNAPSHOTSUSERNAME }}
-          MAVEN_TOKEN: ${{ secrets.SNAPSHOTSPASSWORD }}
+          SnapshotsUsername: ${{ secrets.SNAPSHOTSUSERNAME }}
+          SnapshotsPassword: ${{ secrets.SNAPSHOTSPASSWORD }}
