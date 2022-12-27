@@ -8,6 +8,7 @@ plugins {
     id 'java-library'
     id 'signing'
     id 'maven-publish'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 repositories {
@@ -81,4 +82,12 @@ publishing {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "Plugily-Projects_ScoreboardLib"
+        property "sonar.organization", "plugily-projects"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
