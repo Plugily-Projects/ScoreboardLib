@@ -56,17 +56,17 @@ publishing {
         maven {
             name = "Releases"
             url = "https://maven.plugily.xyz/releases"
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
             }
         }
         maven {
             name = "Snapshots"
             url = uri("https://maven.plugily.xyz/snapshots")
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
             }
         }
     }
