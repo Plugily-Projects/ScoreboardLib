@@ -1,4 +1,4 @@
-# ScoreboardLib
+# ScoreboardLib [![Maven Repository](https://maven.plugily.xyz/api/badge/latest/releases/me/tigerhix/lib/scoreboard?color=40c14a&name=Maven&prefix=v)](https://maven.plugily.xyz/#/releases/me/tigerhix/lib/scoreboard) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Plugily-Projects_ScoreboardLib&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=Plugily-Projects_ScoreboardLib) [![Discord](https://img.shields.io/discord/345628548716822530.svg?color=7289DA&style=for-the-badge&logo=discord)](https://discord.plugily.xyz) [![Patreon](	https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://patreon.com/plugily)
 A flicker-free scoreboard library with support of text up to 122 chars for 1.14+ and 48 chars for 1.13-
 
 What is ScoreboardLib?
