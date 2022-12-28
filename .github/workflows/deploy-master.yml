@@ -16,10 +16,9 @@ jobs:
         run: chmod +x gradlew
       - name: Bump Version
         id: bump
-        uses: Plugily-Projects/version-bump-action@v7
+        uses: Plugily-Projects/version-bump-action@v8
         with:
           github-token: ${{ secrets.github_token }}
-          repo-build: GRADLE
           auto-version-bump: false
           auto-version-bump-release: true
       - name: Print Version
