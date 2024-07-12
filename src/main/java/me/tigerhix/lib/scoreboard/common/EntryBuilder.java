@@ -49,7 +49,7 @@ public final class EntryBuilder {
 
     private String adapt(String entry) {
         // Cut off the exceeded part if needed
-        if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14_R1)) {
+        if (ServerVersion.Version.isCurrentEqualOrHigher(ServerVersion.Version.v1_14)) {
             if (entry.length() > 144) entry = entry.substring(0, 143);
         } else {
             if (entry.length() > 48) entry = entry.substring(0, 47);
