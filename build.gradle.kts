@@ -24,7 +24,7 @@ dependencies {
 
 
 group = "me.tigerhix.lib"
-version = "1.4.4-SNAPSHOT1"
+version = "1.4.5"
 description = "scoreboard"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
